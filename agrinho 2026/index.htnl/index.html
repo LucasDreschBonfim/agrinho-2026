@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agrinho 2026: Fazenda Autônoma Tech</title>
+    <style>
+        :root {
+            --bg-color: #121824;
+            --panel-bg: #1e293b;
+            --text-main: #f8fafc;
+            --accent-green: #10b981;
+            --accent-blue: #3b82f6;
+            --border-color: #334155;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 3px solid var(--accent-green);
+            padding-bottom: 10px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        header h1 {
+            margin: 0;
+            color: var(--accent-green);
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        header p {
+            margin: 5px 0 0 0;
+            opacity: 0.8;
+        }
+
+        .game-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        @media (max-width: 900px) {
+            .game-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .panel h2 {
+            margin-top: 0;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+            color: var(--accent-blue);
+            font-size: 1.3rem;
+        }
+
+        /* Top Status Bar */
+        .status-bar {
+            display: flex;
+            justify-content: space-around;
+            background-color: var(--panel-bg);
+            width: 100%;
+            max-width: 1200px;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            border: 1px solid var(--border-color);
+        }
+
+        .status-item {
+            text-align: center;
+        }
+
+        .status-item span {
+            display: block;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        .status-item strong {
+            font-size: 1.4rem;
+            color: var(--accent-green);
+        }
+
+        /* Farm Grid */
+        .farm-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            height: fit-content;
+        }
+
+        .plot {
+            background-color: #2d3748;
+            border: 2px solid #4a5568;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 160px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .plot.active {
+            border-color: var(--accent-green);
+        }
+
+        .plot-info {
+            font-size: 0.85rem;
+        }
+
+        .plot-crop {
+            font-size: 1.8rem;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .progress-bar {
+            background-color: #4a5568;
+            border-radius: 5px;
+            overflow: hidden;
+            height: 10px;
+            margin-bottom: 5px;
+        }
+
+        .progress-fill {
+            background-color: var(--accent-green);
+            width: 0%;
+            height: 100%;
+            transition: width 0.1s linear;
+        }
+
+        .water-bar {
+            background-color: #4a5568;
+            border-radius: 5px;
+            overflow: hidden;
+            height: 6px;
+        }
+
+        .water-fill {
+            background-color: var(--accent-blue);
+            width: 100%;
+            height: 100%;
+        }
+
+        .plot-actions {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            background-color: #4a5568;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            flex: 1;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #718096;
+        }
+
+        .btn-green { background-color: var(--accent-green); }
+        .btn-green:hover { background-color: #059669; }
+        .btn-blue { background-color: var(--accent-blue); }
+        .btn-blue:hover { background-color: #2563eb; }
+
+        /* Shop and Tech Lists */
+        .shop-item, .tech-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #2d3748;
+        }
+
+        .shop-item:last-child, .tech-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-details p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .item-details span {
+            font-size: 0.75rem;
+            opacity: 0.6;
+        }
+
+        /* Logs */
+        #log-container {
+            max-height: 250px;
+            overflow-y: auto;
+            font-size: 0.8rem;
+            font-family: monospace;
+            background-color: #0f172a;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .log-entry {
+            margin-bottom: 4px;
+            border-left: 2px solid var(--accent-blue);
+            padding-left: 5px;
+        }
+
+        .weather-alert {
+            font-weight: bold;
+            color: #f59e0b;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Agrinho 2026</h1>
+        <p>Eco-Sustentabilidade & Agronegócio Autônomo de Alta Precisão</p>
+    </header>
+
+    <div class="status-bar">
+        <div class="status-item">
+            <span>Capital Digital</span>
+            <strong id="money-display">R$ 1.500</strong>
+        </div>
+        <div class="status-item">
+            <span>Clima Atual</span>
+            <strong id="weather-display" style="color: #f59e0b;">☀️ Ensolarado</strong>
+        </div>
+        <div class="status-item">
+            <span>Eficiência Tecnológica</span>
+            <strong id="tech-display" style="color: #a78bfa;">0%</strong>
+        </div>
+    </div>
+
+    <div class="game-container">
+        
+        <div class="panel">
+            <h2>Mercado de Sementes</h2>
+            <div id="seed-market">
+                </div>
+            <p style="font-size:0.75rem; opacity:0.6; margin-top:15px;">* Cultivos mais complexos exigem maior monitoramento de umidade ou automação avançada.</p>
+        </div>
+
+        <div class="panel">
+            <h2>Campos de Cultivo Inteligentes (IoT)</h2>
+            <div class="farm-grid" id="farm-grid">
+                </div>
+        </div>
+
+        <div class="panel" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <h2>Hub de Tecnologia Agrinho</h2>
+                <div id="tech-hub">
+                    </div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <h2>Relatórios da IA Central</h2>
+                <div id="log-container">
+                    <div class="log-entry">Sistema inicializado. Cultive manualmente ou adquira IA de automação.</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- GAME DATA & CONFIG ---
+        let money = 1500;
+        let activeWeather = "Ensolarado"; // Ensolarado, Chuvoso, Seca, Geada
+        let weatherImpact = { growth: 1, waterBurn: 1 };
+
+        const cropsConfig = {
+            soja: { name: "Soja Transgênica", icon: "🌱", cost: 100, sell: 250, time: 10, waterNeed: 0.5 },
+            milho: { name: "Milho Bio-Tech", icon: "🌽", cost: 250, sell: 600, time: 18, waterNeed: 0.8 },
+            trigo: { name: "Trigo Hidropônico", icon: "🌾", cost: 500, sell: 1300, time: 28, waterNeed: 0.4 },
+            cafe: { name: "Café Gourmet Agro", icon: "☕", cost: 1000, sell: 3000, time: 45, waterNeed: 1.2 }
+        };
+
+        const techUpgrades = {
+            sensorIot: { id: "sensorIot", name: "Sensores IoT de Solo", desc: "Mostra dados exatos de umidade e otimiza consumo de água.", cost: 400, bought: false },
+            droneIrrigacao: { id: "droneIrrigacao", name: "Drones de Irrigação IA", desc: "Regam os lotes automaticamente se a umidade cair de 35%.", cost: 1200, bought: false },
+            harvestBot: { id: "harvestBot", name: "Colheitadeiras Autônomas", desc: "Detectam o ponto ideal do fruto e colhem de forma 100% autônoma.", cost: 2500, bought: false },
+            weatherShield: { id: "weatherShield", name: "Climatizador de Escudo Estufa", desc: "Anula os efeitos severos de Seca e Geada na fazenda.", cost: 5000, bought: false }
+        };
+
+        // 9 plots structure
+        let plots = Array.from({ length: 9 }, (_, i) => ({
+            id: i,
+            crop: null,       // key de cropsConfig ou null
+            progress: 0,      // 0 a 100
+            water: 100,       // 0 a 100
+            status: "Vazio"   // Vazio, Crescendo, Pronto, Seco
+        }));
+
+        let selectedSeed = "soja";
+
+        // --- CORE LOOPS ---
+        // Principal update a cada 1 segundo (Tick do jogo)
+        setInterval(() => {
+            processWeatherEffects();
+            processPlotsGrowth();
+            updateUI();
+        }, 1000);
+
+        // Loop de clima a cada 20 segundos
+        setInterval(() => {
+            changeWeather();
+        }, 20000);
+
+        // --- FUNCTIONS ---
+
+        function initGame() {
+            renderSeedMarket();
+            renderTechHub();
+            renderGrid();
+            updateUI();
+        }
+
+        function renderSeedMarket() {
+            const container = document.getElementById("seed-market");
+            container.innerHTML = "";
+            Object.keys(cropsConfig).forEach(key => {
+                const crop = cropsConfig[key];
+                container.innerHTML += `
+                    <div class="shop-item" style="cursor:pointer; border-radius:6px; padding:5px;" onclick="selectSeed('${key}')" id="seed-card-${key}">
+                        <div class="item-details">
+                            <p>${crop.icon} <strong>${crop.name}</strong></p>
+                            <span>Custo: R$${crop.cost} | Retorno: R$${crop.sell}</span>
+                        </div>
+                        <span style="font-size:0.8rem; font-weight:bold; color:var(--accent-green)">Selecionar</span>
+                    </div>
+                `;
+            });
+            selectSeed("soja");
+        }
+
+        function selectSeed(key) {
+            selectedSeed = key;
+            Object.keys(cropsConfig).forEach(k => {
+                const card = document.getElementById(`seed-card-${k}`);
+                if (card) card.style.background = (k === key) ? "#334155" : "transparent";
+            });
+        }
+
+        function renderTechHub() {
+            const container = document.getElementById("tech-hub");
+            container.innerHTML = "";
+            Object.keys(techUpgrades).forEach(key => {
+                const tech = techUpgrades[key];
+                container.innerHTML += `
+                    <div class="tech-item">
+                        <div class="item-details" style="max-width: 70%;">
+                            <p><strong>${tech.name}</strong></p>
+                            <span style="display:block; line-height:1.2; margin-top:2px;">${tech.desc}</span>
+                        </div>
+                        <button class="btn ${tech.bought ? 'btn-blue' : 'btn-green'}" id="btn-tech-${key}" onclick="buyTech('${key}')">
+                            ${tech.bought ? 'Ativo' : 'R$ ' + tech.cost}
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById("farm-grid");
+            grid.innerHTML = "";
+            plots.forEach(plot => {
+                grid.innerHTML += `
+                    <div class="plot" id="plot-${plot.id}">
+                        <div class="plot-info">
+                            <span style="float:right; font-weight:bold; color:#94a3b8;">#${plot.id + 1}</span>
+                            <span id="plot-status-text-${plot.id}">Lote Vazio</span>
+                        </div>
+                        <div class="plot-crop" id="plot-icon-${plot.id}">🟫</div>
+                        <div>
+                            <div class="progress-bar"><div class="progress-fill" id="plot-progress-${plot.id}"></div></div>
+                            <div class="water-bar" id="water-bar-container-${plot.id}" style="visibility:hidden;"><div class="water-fill" id="plot-water-${plot.id}"></div></div>
+                        </div>
+                        <div class="plot-actions">
+                            <button class="btn btn-green" onclick="plant(${plot.id})">Plantar</button>
+                            <button class="btn btn-blue" onclick="waterManual(${plot.id})">Regar</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function updateUI() {
+            document.getElementById("money-display").innerText = `R$ ${money.toLocaleString('pt-BR')}`;
+            document.getElementById("weather-display").innerText = getWeatherEmoji() + " " + activeWeather;
+            
+            // Calc Tech efficiency
+            let boughtCount = Object.values(techUpgrades).filter(t => t.bought).length;
+            let efficiency = Math.round((boughtCount / Object.keys(techUpgrades).length) * 100);
+            document.getElementById("tech-display").innerText = `${efficiency}%`;
+
+            // Dynamic colors for weather
+            let wColor = "#f59e0b";
+            if(activeWeather === "Chuvoso") wColor = "#3b82f6";
+            if(activeWeather === "Seca") wColor = "#ef4444";
+            if(activeWeather === "Geada") wColor = "#60a5fa";
+            document.getElementById("weather-display").style.color = wColor;
+        }
+
+        function getWeatherEmoji() {
+            if(activeWeather === "Ensolarado") return "☀️";
+            if(activeWeather === "Chuvoso") return "🌧️";
+            if(activeWeather === "Seca") return "🏜️";
+            if(activeWeather === "Geada") return "❄️";
+            return "☀️";
+        }
+
+        // --- GAMEPLAY MECHANICS ---
+
+        function plant(plotId) {
+            let plot = plots[plotId];
+            if (plot.crop !== null) {
+                // Se já estiver pronto, colhe
+                if(plot.status === "Pronto") {
+                    harvest(plotId);
+                } else {
+                    addLog(`O Lote ${plotId+1} já está ocupado.`, "normal");
+                }
+                return;
+            }
+
+            let seedData = cropsConfig[selectedSeed];
+            if (money < seedData.cost) {
+                addLog("Capital insuficiente para comprar essa semente bio-tecnológica!", "weather-alert");
+                return;
+            }
+
+            money -= seedData.cost;
+            plot.crop = selectedSeed;
+            plot.progress = 0;
+            plot.water = 100;
+            plot.status = "Crescendo";
+
+            // Visual update imediato do lote
+            document.getElementById(`plot-${plotId}`).classList.add("active");
+            document.getElementById(`plot-icon-${plotId}`).innerText = seedData.icon;
+            if(techUpgrades.sensorIot.bought) {
+                document.getElementById(`water-bar-container-${plotId}`).style.visibility = "visible";
+            }
+            updateUI();
+        }
+
+        function waterManual(plotId) {
+            let plot = plots[plotId];
+            if(plot.crop === null) return;
+            plot.water = Math.min(plot.water + 40, 100);
+            if(plot.status === "Seco" && plot.water > 20) {
+                plot.status = "Crescendo";
+            }
+            addLog(`Lote ${plotId+1} irrigado manualmente.`, "normal");
+        }
+
+        function harvest(plotId) {
+            let plot = plots[plotId];
+            if(plot.status !== "Pronto") return;
+
+            let cropData = cropsConfig[plot.crop];
+            let profit = cropData.sell;
+
+            money += profit;
+            addLog(`Colheita realizada no Lote ${plotId+1}! +R$${profit} injetados no capital.`, "normal");
+
+            // Reset plot
+            resetPlot(plotId);
+            updateUI();
+        }
+
+        function resetPlot(plotId) {
+            let plot = plots[plotId];
+            plot.crop = null;
+            plot.progress = 0;
+            plot.water = 100;
+            plot.status = "Vazio";
+
+            document.getElementById(`plot-${plotId}`).classList.remove("active");
+            document.getElementById(`plot-icon-${plotId}`).innerText = "🟫";
+            document.getElementById(`plot-progress-${plotId}`).style.width = "0%";
+            document.getElementById(`plot-status-text-${plotId}`).innerText = "Lote Vazio";
+            document.getElementById(`water-bar-container-${plotId}`).style.visibility = "hidden";
+        }
+
+        function buyTech(techKey) {
+            let tech = techUpgrades[techKey];
+            if(tech.bought) return;
+
+            if(money < tech.cost) {
+                addLog("Falta de verba para pesquisa e desenvolvimento dessa tecnologia.", "weather-alert");
+                return;
+            }
+
+            money -= tech.cost;
+            tech.bought = true;
+            
+            addLog(`Tecnologia Desbloqueada: ${tech.name}!`, "normal");
+            renderTechHub();
+            
+            if(techKey === "sensorIot") {
+                // Habilita as barras de água visíveis de quem já tá plantado
+                plots.forEach(p => {
+                    if(p.crop) document.getElementById(`water-bar-container-${p.id}`).style.visibility = "visible";
+                });
+            }
+
+            updateUI();
+        }
+
+        // --- BACKGROUND SIMULATION ENGINE ---
+
+        function changeWeather() {
+            const weathers = ["Ensolarado", "Ensolarado", "Chuvoso", "Seca", "Geada"];
+            // Sorteia novo clima
+            let newWeather = weathers[Math.floor(Math.random() * weathers.length)];
+            activeWeather = newWeather;
+
+            if(techUpgrades.weatherShield.bought) {
+                addLog(`Mudança de clima para ${activeWeather}. Escudo de Estufa protege os cultivos ativos.`, "normal");
+                weatherImpact.growth = 1;
+                weatherImpact.waterBurn = activeWeather === "Chuvoso" ? 0 : 0.5; // Melhora uso da água
+                updateUI();
+                return;
+            }
+
+            if(activeWeather === "Ensolarado") {
+                weatherImpact.growth = 1;
+                weatherImpact.waterBurn = 1.2;
+            } else if(activeWeather === "Chuvoso") {
+                weatherImpact.growth = 1.5; // Cresce rápido na chuva
+                weatherImpact.waterBurn = -2; // Regenera água
+            } else if(activeWeather === "Seca") {
+                weatherImpact.growth = 0.5; // Reduz crescimento
+                weatherImpact.waterBurn = 2.5; // Seca água muito rápido
+                addLog("⚠️ ALERTA DE SECA SEVERA! Ative irrigação ou proteja a fazenda.", "weather-alert");
+            } else if(activeWeather === "Geada") {
+                weatherImpact.growth = 0; // Para o crescimento
+                weatherImpact.waterBurn = 0.5;
+                addLog("⚠️ ALERTA DE GEADA! Cultivos não climatizados pararam de se desenvolver.", "weather-alert");
+            }
+
+            updateUI();
+        }
+
+        function processWeatherEffects() {
+            plots.forEach(plot => {
+                if(plot.crop === null) return;
+
+                // Consumo / Ganho de água
+                let cropData = cropsConfig[plot.crop];
+                let dynamicBurn = cropData.waterNeed * weatherImpact.waterBurn;
+                
+                plot.water = Math.max(0, Math.min(100, plot.water - dynamicBurn));
+
+                // Drone Autônomo atuando se comprado
+                if(techUpgrades.droneIrrigacao.bought && plot.water < 35) {
+                    plot.water = Math.min(plot.water + 50, 100);
+                    addLog(`🤖 Drone IA detectou baixa umidade e irrigou o Lote ${plot.id+1}.`, "normal");
+                }
+
+                // Define status de secura
+                if(plot.water <= 0) {
+                    plot.status = "Seco";
+                }
+            });
+        }
+
+        function processPlotsGrowth() {
+            plots.forEach(plot => {
+                if(plot.crop === null || plot.status === "Seco" || plot.status
