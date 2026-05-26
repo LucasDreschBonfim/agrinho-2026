@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agrinho 2026: Fazenda Autônoma Tech</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>Agrinho 2026</h1>
+        <p>Eco-Sustentabilidade & Agronegócio Autônomo de Alta Precisão</p>
+    </header>
+
+    <div class="status-bar">
+        <div class="status-item">
+            <span>Capital Digital</span>
+            <strong id="money-display">R$ 1.500</strong>
+        </div>
+        <div class="status-item">
+            <span>Clima Atual</span>
+            <strong id="weather-display" style="color: #f59e0b;">☀️ Ensolarado</strong>
+        </div>
+        <div class="status-item">
+            <span>Eficiência Tecnológica</span>
+            <strong id="tech-display" style="color: #a78bfa;">0%</strong>
+        </div>
+    </div>
+
+    <div class="game-container">
+        
+        <div class="panel">
+            <h2>Mercado de Sementes</h2>
+            <div id="seed-market"></div>
+            <p style="font-size:0.75rem; opacity:0.6; margin-top:15px;">* Cultivos mais complexos exigem maior monitoramento de umidade ou automação avançada.</p>
+        </div>
+
+        <div class="panel">
+            <h2>Campos de Cultivo Inteligentes (IoT)</h2>
+            <div class="farm-grid" id="farm-grid"></div>
+        </div>
+
+        <div class="panel" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <h2>Hub de Tecnologia Agrinho</h2>
+                <div id="tech-hub"></div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <h2>Relatórios da IA Central</h2>
+                <div id="log-container">
+                    <div class="log-entry">Sistema inicializado. Cultive manualmente ou adquira IA de automação.</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
